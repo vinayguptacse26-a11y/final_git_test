@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 from utils import add
 
+=======
+>>>>>>> 7106040 (chore: add dummy comment to sample.py for feature-test branch)
 # Dummy comment added by automation for feature-test branch
 
 def greet():
