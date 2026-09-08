@@ -4,6 +4,9 @@ from utils import add
 
 def greet():
     print("hello from Anshu Sharma from behroad")
+    print("hello from Vinay Gupta")
+    print("hello from Anjali Sharma")
+    print("hello from Jai")
 
 
 def perform_calculation():
