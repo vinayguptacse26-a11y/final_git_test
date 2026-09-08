@@ -3,11 +3,8 @@ from utils import add
 # Dummy comment added by automation for feature-test branch
 
 def greet():
-    print("Greetings, universe!")
-    print("Hello, awesome world!")
-    print("hello from vinay")
-    print("This line is intentionally changed to cause a merge conflict.")
-    print("Testing merge conflicts with AI Git Push project!")
+    print("hello from Anshu Sharma from behroad")
+
 
 def perform_calculation():
     # Expecting a dictionary return type now
