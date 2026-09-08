@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-from utils import add
-
-=======
->>>>>>> 7106040 (chore: add dummy comment to sample.py for feature-test branch)
-# Dummy comment added by automation for feature-test branch
+from utils import add# Dummy comment added by automation for feature-test branch
 
 def greet():
     print("Greetings, universe!")
@@ -11,6 +6,11 @@ def greet():
     print("This line is intentionally changed to cause a merge conflict.")
     print("Testing merge conflicts with AI Git Push project!")
     print("hello from Vinay Gupta")
+
+def perform_calculation():
+    # Expecting a dictionary return type now
+    res = add(10.5, 20.3, 5.0, round_to=1)
+    print(f"Calculation result: {res['total']} (from {res['count']} numbers)")
 
 def perform_calculation():
     # Expecting a dictionary return type now
