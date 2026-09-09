@@ -1,4 +1,6 @@
-from utils import add# Dummy comment added by automation for feature-test branch
+from utils import add
+
+# Dummy comment added by automation for feature-test branch
 
 def greet():
     print("Greetings, universe!")
@@ -12,10 +14,32 @@ def perform_calculation():
     res = add(10.5, 20.3, 5.0, round_to=1)
     print(f"Calculation result: {res['total']} (from {res['count']} numbers)")
 
+if __name__ == "__main__":
+    greet()
+    perform_calculation()
+def greet():
+    print("Greetings, universe!")
+    print("Hello, awesome world!")
+    print("This line is intentionally changed to cause a merge conflict.")
+    print("Testing merge conflicts with AI Git Push project!")
+    print("hello from Vinay Gupta")
+
+<<<<<<< HEAD
 def perform_calculation():
     # Expecting a dictionary return type now
     res = add(10.5, 20.3, 5.0, round_to=1)
     print(f"Calculation result: {res['total']} (from {res['count']} numbers)")
+=======
+>>>>>>> cd36c1f (chore: simplify add to two-arg signature)
+
+def perform_calculation():
+    # Updated to use the simplified add(a, b) signature
+    try:
+        result = add(10.5, 20.3)
+        print(f"Calculation result: {result}")
+    except Exception as exc:
+        print(f"Calculation failed: {exc}")
+
 
 if __name__ == "__main__":
     greet()
