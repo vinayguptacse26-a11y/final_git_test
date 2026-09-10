@@ -58,6 +58,7 @@ def greet():
     print("Hello, awesome world!")
     print("This line is intentionally changed to cause a merge conflict.")
     print("Testing merge conflicts with AI Git Push project!")
+    print("hello from emesh")
     print("hello from Vinay Gupta")
 
 
