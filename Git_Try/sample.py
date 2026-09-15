@@ -8,8 +8,6 @@ def greet():
     print("This line is intentionally changed to cause a merge conflict.")
     print("Testing merge conflicts with AI Git Push project!")
     print("hello from Vinay Gupta")
-    print("hello from Gaurav")
-
 
 def perform_calculation():
     # Expecting a dictionary return type now
