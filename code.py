@@ -182,6 +182,14 @@ def safe_eval(expr: str):
     return _eval(parsed)
 
 
+def cube(n):
+    """Return the cube of n."""
+    return n ** 3
+
+# Register cube in the allowed functions so safe_eval can call it
+_ALLOWED_FUNCS['cube'] = cube
+
+
 def _print_welcome():
     print("Simple Safe Calculator")
     print("Type arithmetic expressions to evaluate. Examples:")
@@ -195,7 +203,7 @@ def _print_welcome():
 
 def _print_help():
     print("Available functions:")
-    names = sorted(list(_ALLOWED_FUNCS.keys()) + list(_ALLOWED_NAMES.keys()))
+    names =[REDACTED]
     print(', '.join(names))
 
 
