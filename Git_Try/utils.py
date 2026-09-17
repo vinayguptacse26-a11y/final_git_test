@@ -17,5 +17,11 @@ def add(*numbers: float, round_to: int = 2) -> dict:
     }
 
 def multiply(a, b):
+<<<<<<< HEAD
+    return a * b
 def multiply(a, b):
     return a * b
+=======
+def multiply(a, b):
+    return a * b
+>>>>>>> updated

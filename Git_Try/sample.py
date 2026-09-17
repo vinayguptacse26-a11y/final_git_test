@@ -1,5 +1,11 @@
 from utils import add
 
+# The file in main implements a simplified numeric utils module.
+# We will keep the more feature-rich implementation from the incoming branch
+# (which provides helper math functions) and import add from utils.
+
+# The rest of this module provides greeting and calculation helpers.
+
 # Dummy comment added by automation for feature-test branch
 
 def greet():
@@ -9,6 +15,8 @@ def greet():
     print("Testing merge conflicts with AI Git Push project!")
     print("hello from Vinay Gupta")
 
+<<<<<<< HEAD
+=======
 def perform_calculation():
     # Expecting a dictionary return type now
     res = add(10.5, 20.3, 5.0, round_to=1)
@@ -31,6 +39,7 @@ def perform_calculation():
     print(f"Calculation result: {res['total']} (from {res['count']} numbers)")
 =======
 >>>>>>> cd36c1f (chore: simplify add to two-arg signature)
+>>>>>>> updated
 
 def perform_calculation():
     # Updated to use the simplified add(a, b) signature
@@ -106,4 +115,21 @@ def isprime(n: Any) -> bool:
 
 if __name__ == "__main__":
     greet()
-    perform_calculation()
+def perform_calculation():
+    # Updated to handle both add signatures by trying the multi-arg API first
+    try:
+        # Try the newer multi-argument API
+        res = add(10.5, 20.3, 5.0, round_to=1)
+        # If a dict is returned (newer API), print detailed result
+        if isinstance(res, dict):
+            print(f"Calculation result: {res['total']} (from {res['count']} numbers)")
+        else:
+            # If a numeric result is returned (older API), print it directly
+            print(f"Calculation result: {res}")
+    except TypeError:
+        # Fallback to old two-arg add signature
+        try:
+            result = add(10.5, 20.3)
+            print(f"Calculation result: {result}")
+        except Exception as exc:
+            print(f"Calculation failed: {exc}")
