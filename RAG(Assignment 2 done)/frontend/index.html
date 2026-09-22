@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Intelligence Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --panel-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --user-msg: #4f46e5;
+            --ai-msg: #f3f4f6;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Layout */
+        .sidebar { width: 260px; background-color: var(--panel-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0; }
+        .sidebar h2 { padding: 0 20px 20px; font-size: 1.2rem; color: var(--primary); border-bottom: 1px solid var(--border-color); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        
+        .nav-item { padding: 15px 20px; background: none; border: none; text-align: left; font-size: 1rem; color: var(--text-muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; width: 100%; }
+        .nav-item:hover { background-color: var(--bg-color); color: var(--text-main); }
+        .nav-item.active { background-color: #e0e7ff; color: var(--primary); border-right: 4px solid var(--primary); font-weight: 600; }
+
+        .main-content { flex: 1; position: relative; background-color: var(--bg-color); height: 100%; overflow: hidden; }
+
+        /* Tab Logic */
+        .tab-view { display: none; height: 100%; flex-direction: column; overflow-y: auto; padding-bottom: 60px; }
+        .tab-view.active { display: flex; }
+
+        /* --- Chat View Styles --- */
+        .settings-bar { padding: 15px 20px; background: var(--panel-bg); border-bottom: 1px solid var(--border-color); display: flex; gap: 15px; align-items: center; flex-shrink: 0; }
+        .settings-bar select, .settings-bar input { padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; }
+
+        .chat-window { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg-user, .msg-ai { max-width: 80%; padding: 12px 16px; border-radius: 8px; line-height: 1.5; word-wrap: break-word; }
+        .msg-user { align-self: flex-end; background-color: var(--user-msg); color: white; border-bottom-right-radius: 2px; }
+        .msg-ai { align-self: flex-start; background-color: var(--ai-msg); color: var(--text-main); border-bottom-left-radius: 2px; border: 1px solid var(--border-color); }
+        
+        .msg-ai code { background-color: #e5e7eb; padding: 2px 5px; border-radius: 4px; font-family: monospace; color: #c2410c; }
+        .msg-ai strong { font-weight: 700; }
+
+        /* Citations & Eval Styles */
+        .citation-box { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 8px; }
+        .citation-pill { font-size: 0.75rem; background: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 12px; display: flex; align-items: center; gap: 5px; }
+        
+        .eval-box { margin-top: 8px; display: flex; gap: 10px; font-size: 0.75rem; border-top: 1px dashed var(--border-color); padding-top: 8px; }
+        .eval-badge { display: flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; background: white; border: 1px solid var(--border-color); font-weight: 500; color: var(--text-muted); }
+        .score-high { color: var(--success); font-weight: 700; }
+        .score-low { color: var(--danger); font-weight: 700; }
+
+        .cache-badge { font-size: 0.7rem; color: var(--warning); background: #fef3c7; padding: 2px 6px; border-radius: 4px; margin-bottom: 5px; display: inline-block; font-weight: bold; text-transform: uppercase; }
+
+        .input-area { background: var(--panel-bg); padding: 15px 20px; border-top: 1px solid var(--border-color); flex-shrink: 0; }
+        .preview-area { font-size: 0.85rem; color: var(--primary); margin-bottom: 8px; font-weight: 600; }
+        .input-controls { display: flex; gap: 10px; align-items: center; }
+        .input-controls input[type="text"] { flex: 1; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-size: 1rem; }
+        
+        .icon-btn { background: none; border: 1px solid var(--border-color); font-size: 1.1rem; cursor: pointer; padding: 8px; width: 40px; height: 40px; border-radius: 50%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+        .icon-btn:hover { background: var(--bg-color); color: var(--primary); border-color: var(--primary); }
+        .send-btn { background-color: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+        .send-btn:hover { background-color: var(--primary-hover); }
+
+        /* Ingest View */
+        .ingest-container { max-width: 800px; margin: 40px auto; background: var(--panel-bg); padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); width: 90%; }
+        .ingest-container h2 { margin-bottom: 5px; color: var(--text-main); }
+        .ingest-subtitle { margin-bottom: 30px; color: var(--text-muted); font-size: 0.95rem; }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main); }
+        .file-drop-zone { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 30px; text-align: center; cursor: pointer; transition: 0.2s; background: #f9fafb; }
+        .file-drop-zone:hover { border-color: var(--primary); background: #eef2ff; }
+        .file-drop-zone i { font-size: 2rem; color: #9ca3af; margin-bottom: 10px; }
+        .form-input-full { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; font-size: 1rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .primary-btn { width: 100%; background-color: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .primary-btn:hover { background-color: var(--primary-hover); }
+        .status-msg { margin-top: 20px; text-align: center; font-weight: 500; padding: 10px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <h2><i class="fas fa-brain"></i> RAG Pro</h2>
+        <nav>
+            <button class="nav-item active" onclick="switchTab('chat-view')">
+                <i class="fas fa-search"></i> Search & Query
+            </button>
+            <button class="nav-item" onclick="switchTab('ingest-view')">
+                <i class="fas fa-file-upload"></i> Upload & Index
+            </button>
+        </nav>
+        
+        <!-- Clear Cache Button -->
+        <button class="nav-item" style="margin-top: auto; color: var(--danger); border-top: 1px solid var(--border-color);" onclick="clearCache()">
+            <i class="fas fa-trash-alt"></i> Clear Memory
+        </button>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        
+        <!-- 1. CHAT & QUERY VIEW (Unified) -->
+        <div id="chat-view" class="tab-view active">
+            <div class="settings-bar">
+                <div style="flex: 1; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
+                    <i class="fas fa-magic"></i> Auto-Routing Active
+                </div>
+                
+                <select id="search-type" title="Strategy for Document Search">
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="Semantic">Semantic</option>
+                    <option value="Keyword">Keyword</option>
+                </select>
+                <input type="number" id="top-k" value="5" min="1" max="20" title="Top K Results" style="width: 80px;">
+            </div>
+            
+            <div id="chat-window" class="chat-window">
+                <div class="msg-ai">
+                    👋 <strong>Hello!</strong><br>
+                    I can answer questions from your uploaded <strong>Documents</strong> (PDF/DOCX) or analyze your <strong>Datasets</strong> (CSV/Excel).<br>
+                    <small>Try uploading an image or asking a question below.</small>
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <div id="image-preview-area" class="preview-area"></div>
+                <div class="input-controls">
+                    <!-- Image Upload -->
+                    <input type="file" id="chat-image" accept="image/*" style="display: none;" onchange="showImagePreview()">
+                    <button class="icon-btn" onclick="document.getElementById('chat-image').click()" title="Upload Image">
+                        <i class="fas fa-image"></i>
+                    </button>
+                    
+                    <!-- Voice Input -->
+                    <button id="mic-btn" class="icon-btn" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+
+                    <input type="text" id="query-text" placeholder="Type a question..." onkeypress="if(event.key === 'Enter') sendQuery()">
+                    
+                    <button onclick="sendQuery()" class="send-btn">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. UPLOAD & INGEST VIEW -->
+        <div id="ingest-view" class="tab-view">
+            <div class="ingest-container">
+                <h2>Document Ingestion</h2>
+                <p class="ingest-subtitle">Process PDFs, Word docs for Search, or CSV/Excel for Data Analysis.</p>
+                
+                <div class="form-group">
+                    <label>1. Select Document</label>
+                    <div class="file-drop-zone" onclick="document.getElementById('upload-file').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p id="file-label">Click to browse files</p>
+                        <input type="file" id="upload-file" accept=".pdf,.docx,.pptx,.txt,.csv,.xlsx,.xls" hidden onchange="handleFileSelect()">
+                    </div>
+                </div>
+
+                <div class="form-group" style="background:#f0f9ff; padding:15px; border-radius:8px; border:1px solid #bae6fd;">
+                    <label style="color:#0369a1; margin-bottom:5px;"><i class="fas fa-info-circle"></i> Automatic Routing</label>
+                    <p style="font-size:0.85rem; color:#0c4a6e; margin:0;">
+                        Files will be automatically sorted based on type:<br>
+                        • <strong>PDF/DOCX/PPTX</strong> &rarr; <span style="font-family:monospace; background:rgba(255,255,255,0.5); padding:2px 4px; border-radius:4px;">vector_index</span><br>
+                        • <strong>CSV/Excel</strong> &rarr; <span style="font-family:monospace; background:rgba(255,255,255,0.5); padding:2px 4px; border-radius:4px;">sql_index</span>
+                    </p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <!-- THIS ID IS USED BY JS TO HIDE/SHOW RULES -->
+                        <div id="processing-rules">
+                            <label>2. Processing Rules (Docs Only)</label>
+                            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <label style="font-size:0.85rem; color:#6b7280; margin-bottom:5px;">Chunking Strategy</label>
+                                <select id="chunk-strategy" class="form-input-full" onchange="updateParamLabels()">
+                                    <option value="Fixed">Fixed Size</option>
+                                    <option value="Paragraph">Paragraph Aware</option>
+                                    <option value="Section Aware">Section Aware</option>
+                                    <option value="Token Based">Token Based</option>
+                                </select>
+                                <label id="param-label" style="font-size:0.85rem; color:#6b7280; margin-bottom:5px; margin-top:15px;">Max Characters</label>
+                                <input type="number" id="param-value" class="form-input-full" value="500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="startIngestion()" class="primary-btn">
+                    <i class="fas fa-cogs"></i> Start Processing
+                </button>
+                <div id="ingest-status" class="status-msg"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- --- JAVASCRIPT LOGIC --- -->
+    <script>
+        const API_BASE = ""; // Relative to current host
+
+        // 1. TABS: SWITCHING LOGIC
+        function switchTab(evt, tabId) {
+            if (typeof evt === 'string') { tabId = evt; evt = null; }
+
+            document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            }
+        }
+
+        // 2. CACHE LOGIC
+        async function clearCache() {
+            if (!confirm("Are you sure you want to clear the AI memory cache?")) return;
+            try {
+                const res = await fetch(`${API_BASE}/clear-cache`, { method: "POST" });
+                const data = await res.json();
+                if (res.ok) alert("✅ Cache cleared!");
+                else alert("❌ Error: " + data.detail);
+            } catch (e) { alert("Connection failed"); }
+        }
+
+        // 3. INGESTION
+        function handleFileSelect() {
+            const file = document.getElementById("upload-file").files[0];
+            if (!file) return;
+            
+            document.getElementById("file-label").innerText = `Selected: ${file.name}`;
+            const ext = file.name.split('.').pop().toLowerCase();
+            const rulesBox = document.getElementById("processing-rules");
+            const strategySelect = document.getElementById("chunk-strategy");
+
+            // DATASET MODE: HIDE RULES for CSV/Excel
+            if (['csv', 'xlsx', 'xls'].includes(ext)) {
+                rulesBox.style.display = "none";
+                return;
+            } else {
+                rulesBox.style.display = "block";
+            }
+            
+            // DOCUMENT MODE
+            let options = ["Fixed", "Paragraph", "Section Aware", "Token Based"];
+            if (ext === "pptx") options = ["Slide Aware", "Image Aware"];
+            
+            strategySelect.innerHTML = options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+            updateParamLabels();
+        }
+
+        function updateParamLabels() {
+            const strategy = document.getElementById("chunk-strategy").value;
+            const label = document.getElementById("param-label");
+            const input = document.getElementById("param-value");
+
+            if (strategy === "Token Based") {
+                label.innerText = "Max Tokens";
+                input.value = 512;
+            } else if (strategy === "Fixed") {
+                label.innerText = "Max Characters";
+                input.value = 500;
+            } else {
+                label.innerText = "Limit (Default)";
+                input.value = 500;
+            }
+        }
+
+        async function startIngestion() {
+            const file = document.getElementById("upload-file").files[0];
+            const status = document.getElementById("ingest-status");
+
+            if (!file) return alert("Please select a file.");
+
+            // AUTO-ROUTING logic handled by file type in frontend,
+            // but backend ultimately decides path. We send generic names.
+            const ext = file.name.split('.').pop().toLowerCase();
+            const indexName = ['csv', 'xlsx', 'xls'].includes(ext) ? "sql_index" : "vector_index";
+
+            const form = new FormData();
+            form.append("file", file);
+            form.append("index_type", indexName);
+            // Default params for backend validation
+            form.append("chunking_strategy", document.getElementById("chunk-strategy").value || "Fixed");
+            form.append("max_chars", document.getElementById("param-value").value || 500); 
+
+            status.innerText = "⏳ Processing...";
+            status.style.color = "var(--primary)";
+            // FIX: Auto-scroll to status so user sees it
+            status.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            try {
+                const res = await fetch(`${API_BASE}/ingest`, { method: "POST", body: form });
+                if (res.ok) {
+                    status.innerHTML = `<span style="color:var(--success)">✅ Success! Added to ${indexName}.</span>`;
+                } else {
+                    const err = await res.json();
+                    status.innerHTML = `<span style="color:var(--danger)">❌ Error: ${err.detail}</span>`;
+                }
+            } catch (e) { status.innerText = "❌ Network Error"; }
+        }
+
+        // 4. CHAT & QUERY
+        function appendMsg(viewId, role, text) {
+            const chat = document.getElementById(viewId);
+            const div = document.createElement("div");
+            div.className = role === 'user' ? "msg-user" : "msg-ai";
+            
+            if (role === 'ai') {
+                div.innerHTML = `
+                    <div class="meta-area"></div>
+                    <div class="text-content">${text}</div>
+                    <div class="citation-box"></div>
+                    <div class="eval-box"></div>
+                `;
+            } else {
+                div.innerHTML = text; 
+            }
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+            return div;
+        }
+
+        function showImagePreview() {
+            const file = document.getElementById("chat-image").files[0];
+            if (file) document.getElementById("image-preview-area").innerText = `📷 Attached: ${file.name}`;
+        }
+        
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.rate = 1.0; u.pitch = 1.0;
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        async function sendQuery() {
+            const qInput = document.getElementById("query-text");
+            const q = qInput.value.trim();
+            if (!q) return;
+
+            const imgFile = document.getElementById("chat-image").files[0];
+            let userDisplay = q;
+            if (imgFile) userDisplay += `<br><small style="opacity:0.8; font-size:0.8rem;">📷 ${imgFile.name}</small>`;
+
+            appendMsg("chat-window", "user", userDisplay);
+            qInput.value = "";
+            document.getElementById("image-preview-area").innerText = "";
+            
+            const aiDiv = appendMsg("chat-window", "ai", "Thinking...");
+            const textEl = aiDiv.querySelector(".text-content");
+            const metaEl = aiDiv.querySelector(".meta-area");
+            const citeEl = aiDiv.querySelector(".citation-box");
+            const evalEl = aiDiv.querySelector(".eval-box");
+            textEl.innerText = ""; 
+
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+            try {
+                let response;
+                
+                // ROUTING LOGIC: Visual Query vs Auto-Detect
+                if (imgFile) {
+                    const fd = new FormData();
+                    fd.append("question", q);
+                    fd.append("image", imgFile);
+                    fd.append("index_type", "auto"); 
+                    response = await fetch(`${API_BASE}/query-visual`, { method: "POST", body: fd });
+                    document.getElementById("chat-image").value = ""; 
+                } else {
+                    response = await fetch(`${API_BASE}/query-stream`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            question: q,
+                            index_type: "auto", // Backend handles intent & routing
+                            search_type: document.getElementById("search-type").value,
+                            top_k: parseInt(document.getElementById("top-k").value)
+                        })
+                    });
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = "";
+                let fullSpeech = "";
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+
+                    lines.forEach(line => {
+                        if (line.startsWith('metadata:')) {
+                            try {
+                                const meta = JSON.parse(line.replace('metadata:', '').trim());
+                                if (meta.cache) metaEl.innerHTML = `<span class="cache-badge">⚡ Cached</span>`;
+                                if (meta.citations) {
+                                    citeEl.innerHTML = meta.citations.map(c => 
+                                        `<span class="citation-pill"><i class="fas fa-file-alt"></i> ${c.display || c.source || "Doc"}</span>`
+                                    ).join('');
+                                }
+                            } catch (e) {}
+                        } 
+                        else if (line.startsWith('evaluation:')) {
+                            try {
+                                const evalData = JSON.parse(line.replace('evaluation:', '').trim());
+                                evalEl.innerHTML = `
+                                    <span class="eval-badge">
+                                        <i class="fas fa-check-circle" style="color:${evalData.faithfulness > 0.5 ? 'var(--success)' : 'var(--danger)'}"></i>
+                                        Faithfulness: <span class="${evalData.faithfulness > 0.5 ? 'score-high' : 'score-low'}">${evalData.faithfulness}</span>
+                                    </span>
+                                    <span class="eval-badge">
+                                        <i class="fas fa-bullseye" style="color:${evalData.relevance > 0.5 ? 'var(--success)' : 'var(--danger)'}"></i>
+                                        Relevance: <span class="${evalData.relevance > 0.5 ? 'score-high' : 'score-low'}">${evalData.relevance}</span>
+                                    </span>
+                                `;
+                            } catch (e) { console.error("Eval parse error", e); }
+                        }
+                        else if (line.startsWith('data: ')) {
+                            const txt = line.replace('data: ', '');
+                            buffer += txt;
+                            fullSpeech += txt;
+                            textEl.innerText = buffer;
+                        }
+                    });
+                    document.getElementById("chat-window").scrollTop = document.getElementById("chat-window").scrollHeight;
+                }
+                speakText(fullSpeech);
+
+            } catch (e) { textEl.innerText = "Error connecting."; }
+        }
+
+        // 5. VOICE INPUT (BROWSER NATIVE)
+        function setupVoice(btnId, inputId, submitFunc) {
+            const btn = document.getElementById(btnId);
+            const input = document.getElementById(inputId);
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (SpeechRecognition) {
+                const recognition = new SpeechRecognition();
+                recognition.continuous = false; recognition.lang = "en-US"; recognition.interimResults = false;
+
+                btn.onmousedown = () => { try { recognition.start(); btn.style.color = "#ef4444"; input.placeholder = "Listening..."; } catch (e) {} };
+                btn.onmouseup = () => { recognition.stop(); btn.style.color = ""; input.placeholder = "Ready. Type your question..."; };
+                recognition.onresult = (event) => { input.value = event.results[0][0].transcript; submitFunc(); };
+            } else { btn.style.display = "none"; }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            setupVoice('mic-btn', 'query-text', sendQuery);
+        });
+    </script>
+</body>
+</html>
