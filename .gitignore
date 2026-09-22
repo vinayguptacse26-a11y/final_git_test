@@ -1,0 +1,46 @@
+# Project-specific ignores for RAG assignment
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# PyCharm
+.idea/
+
+# Data and indexes (large / generated)
+RAG(Assignment 2 done)/app/data/
+RAG(Assignment 2 done)/app/indexes/
+RAG(Assignment 2 done)/app/indexes/**
+RAG(Assignment 2 done)/app/data/**
+RAG(Assignment 2 done)/app/data/raw/**
+RAG(Assignment 2 done)/app/data/uploads/**
+RAG(Assignment 2 done)/app/data/audio_tmp/**
+
+# Model / vector store artifacts
+*.pkl
+*.faiss
+*.db
+
+# Logs and caches
+*.log
+RAG(Assignment 2 done)/app/data/cache/
+
+# Environment files and credentials
+RAG(Assignment 2 done)/.env
+.env
+
+# Frontend build artifacts
+node_modules/
+
+# System files
+.DS_Store
+Thumbs.db
