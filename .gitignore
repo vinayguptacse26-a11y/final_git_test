@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.env.*
+.venv/
+venv/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Byte-compiled / optimized / DLL files
+*.so
+
+# LangChain / model artifacts and indexes
+Emesh/indexes/
+Emesh/indexes/*
+Emesh/indexes/**
+*.faiss
+*.pkl
+
+# Local environment variables
+Emesh/.env
+
+# Test cache
+.pytest_cache/
+
+# Logs
+*.log
+
+# Ignore virtual env folders commonly used
+env/
+
+# Ignore any large data artifacts (adjust if you want to keep source CSVs)
+# Note: CSV source data is currently left unignored; only large generated artifacts are ignored.
+
