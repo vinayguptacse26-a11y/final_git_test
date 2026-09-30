@@ -1,11 +1,15 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-
-# Virtual environments
+*.egg-info/
+.env
+.env.*
+.venv/
 venv/
 env/
+ENV/
+
+# Virtual environments (alternate names kept for safety)
 .venv/
 
 # IDEs and editors
@@ -13,9 +17,48 @@ env/
 .idea/
 *.sublime-workspace
 *.sublime-project
-
 # macOS
 .DS_Store
+
+<<<<<<< HEAD
+# Windows
+Thumbs.db
+
+# Emesh-specific sensitive files and artifacts
+Emesh/.env
+Emesh/indexes/
+Emesh/indexes/**
+Emesh/*_retriever.pkl
+Emesh/indexes/*.pkl
+Emesh/indexes/*.faiss
+
+# Python packaging
+dist/
+build/
+
+# Test output
+.coverage
+htmlcov/
+=======
+# Byte-compiled / optimized / DLL files
+*.so
+
+# LangChain / model artifacts and indexes
+Emesh/indexes/
+Emesh/indexes/*
+Emesh/indexes/**
+*.faiss
+*.pkl
+
+# Local environment variables
+Emesh/.env
+
+# Test cache
+.pytest_cache/
+>>>>>>> 4a8916a43ceb805ed23bed84618c831b14435d5b
+
+# Logs
+*.log
 
 # Windows
 Thumbs.db
@@ -36,7 +79,12 @@ build/
 .coverage
 htmlcov/
 
-# Logs
-*.log
+# Byte-compiled / optimized / DLL files
+*.so
 
-# Keep CSV source data in repo but ignore any generated binary data/indexes
+# LangChain / model artifacts and indexes
+*.faiss
+*.pkl
+
+# Test cache
+.pytest_cache/
