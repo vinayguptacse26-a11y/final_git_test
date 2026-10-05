@@ -20,28 +20,11 @@ ENV/
 # macOS
 .DS_Store
 
-<<<<<<< HEAD
-# Windows
-Thumbs.db
-
-# Emesh-specific sensitive files and artifacts
-Emesh/.env
-Emesh/indexes/
-Emesh/indexes/**
-Emesh/*_retriever.pkl
-Emesh/indexes/*.pkl
-Emesh/indexes/*.faiss
-
-# Python packaging
-dist/
-build/
-
-# Test output
-.coverage
-htmlcov/
-=======
 # Byte-compiled / optimized / DLL files
 *.so
+
+# Windows
+Thumbs.db
 
 # LangChain / model artifacts and indexes
 Emesh/indexes/
@@ -50,13 +33,23 @@ Emesh/indexes/**
 *.faiss
 *.pkl
 
-# Local environment variables
+# Emesh-specific sensitive files and environment
 Emesh/.env
+
+# Local environment variables
+.env
+.env.*
 
 # Test cache
 .pytest_cache/
->>>>>>> 4a8916a43ceb805ed23bed84618c831b14435d5b
 
+# Python packaging
+dist/
+build/
+
+# Test output
+.coverage
+htmlcov/
 # Logs
 *.log
 
