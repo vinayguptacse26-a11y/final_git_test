@@ -13,3 +13,10 @@ def add(a, b):
     if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
         raise TypeError("Both arguments must be int or float")
     return float(a) + float(b)
+
+def subtract(a, b):
+    """Return a - b with the same type checks as add."""
+    if not (isinstance(a, (int, float)) and isinstance(b, (int, float))):
+        raise TypeError('Both arguments must be int or float')
+    return a - b
+
