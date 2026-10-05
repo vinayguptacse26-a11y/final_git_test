@@ -10,8 +10,6 @@ env/
 ENV/
 
 # Virtual environments (alternate names kept for safety)
-.venv/
-
 # IDEs and editors
 .vscode/
 .idea/
@@ -19,72 +17,30 @@ ENV/
 *.sublime-project
 # macOS
 .DS_Store
-
-<<<<<<< HEAD
-# Windows
-Thumbs.db
-
-# Emesh-specific sensitive files and artifacts
-Emesh/.env
-Emesh/indexes/
-Emesh/indexes/**
-Emesh/*_retriever.pkl
-Emesh/indexes/*.pkl
-Emesh/indexes/*.faiss
-
-# Python packaging
-dist/
-build/
-
-# Test output
-.coverage
-htmlcov/
-=======
 # Byte-compiled / optimized / DLL files
 *.so
-
+# Windows
+Thumbs.db
 # LangChain / model artifacts and indexes
 Emesh/indexes/
 Emesh/indexes/*
 Emesh/indexes/**
 *.faiss
 *.pkl
-
-# Local environment variables
+# Emesh-specific sensitive files and environment
 Emesh/.env
-
+# Local environment variables
 # Test cache
 .pytest_cache/
->>>>>>> 4a8916a43ceb805ed23bed84618c831b14435d5b
-
-# Logs
-*.log
-
-# Windows
-Thumbs.db
-
-# Emesh-specific sensitive files and artifacts
-Emesh/.env
-Emesh/indexes/
-Emesh/indexes/**
-Emesh/*_retriever.pkl
-Emesh/indexes/*.pkl
-Emesh/indexes/*.faiss
-
 # Python packaging
 dist/
 build/
-
 # Test output
 .coverage
 htmlcov/
-
-# Byte-compiled / optimized / DLL files
-*.so
-
-# LangChain / model artifacts and indexes
-*.faiss
-*.pkl
-
-# Test cache
-.pytest_cache/
+# Logs
+*.log
+# Emesh-specific sensitive files and artifacts
+Emesh/*_retriever.pkl
+Emesh/indexes/*.pkl
+Emesh/indexes/*.faiss
